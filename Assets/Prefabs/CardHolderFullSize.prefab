@@ -112,7 +112,7 @@ Transform:
   m_GameObject: {fileID: 3022852957720982764}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: -0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -257,6 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdedCardTargetPosition: {fileID: 5661635470337452713}
   cardArea: {fileID: 3610394303506684033}
+  cardHolderCollider: {fileID: 0}
   FadeInDuration: 0.25
   AttentionScaleFactor: 1.05
   AttentionScaleDuration: 0.5

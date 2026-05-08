@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class CardMover : MonoBehaviour
 {
+    private const float MOVEMENT_THRESHOLD = 0.01f;
+    private const float ROTATION_THRESHOLD = 0.1f;
+
+
     [SerializeField] private SpriteRenderer cardImage;
 
     [Header("Movement Settings")]
@@ -20,6 +24,7 @@ public class CardMover : MonoBehaviour
     {
         currentRotationZ = transform.eulerAngles.z;
         targetRotationZ = currentRotationZ;
+        travelTargetPosition = Vector3.forward;
         prevPosition = transform.position;
     }
 
@@ -42,7 +47,7 @@ public class CardMover : MonoBehaviour
         if (travelTargetPosition != Vector3.forward) // we use Vector3.forward as the default value
         {
             LerpTo(travelTargetPosition);
-            if (Vector3.Distance(transform.position, travelTargetPosition) < 0.01f)
+            if (Vector3.Distance(transform.position, travelTargetPosition) < MOVEMENT_THRESHOLD)
             {
                 transform.position = travelTargetPosition;
                 travelTargetPosition = Vector3.forward;
@@ -50,8 +55,8 @@ public class CardMover : MonoBehaviour
         }
         else
         {
-            // When not dragging and not traveling, lerp rotation to 0
-            targetRotationZ = 0;
+            // When not dragging and not traveling, lerp rotation to default
+            targetRotationZ = 0f;
         }
 
         LerpCardRotation();
@@ -77,7 +82,7 @@ public class CardMover : MonoBehaviour
 
         currentRotationZ = Mathf.LerpAngle(currentRotationZ, targetRotationZ, Time.deltaTime / rotationSmoothTime);
 
-        if (Mathf.Abs(currentRotationZ - targetRotationZ) < 0.1f)
+        if (Mathf.Abs(currentRotationZ - targetRotationZ) < ROTATION_THRESHOLD)
         {
             currentRotationZ = targetRotationZ;
         }

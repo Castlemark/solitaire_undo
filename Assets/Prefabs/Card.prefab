@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6555168237590876171}
+  - component: {fileID: 9158220786411054557}
   - component: {fileID: 2280534710108461812}
   - component: {fileID: 4197638346166716541}
   - component: {fileID: 5870790706854087430}
@@ -35,6 +36,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &9158220786411054557
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790915759819859345}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
+  m_SortAtRoot: 0
 --- !u!212 &2280534710108461812
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -149,6 +162,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mover: {fileID: 6736612115418842738}
+  sortingGroup: {fileID: 9158220786411054557}
+  cardCollider: {fileID: 4197638346166716541}
+  dragOffset: {x: 0, y: 1.25, z: 0}
+  stackedCardOffset: {x: 0, y: 0.75, z: 0}
 --- !u!114 &6736612115418842738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,7 +179,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardImage: {fileID: 2280534710108461812}
-  cardFollowPositionOffset: 0.8
   followSmoothTime: 0.1
   rotationSmoothTime: 0.1
   maxRotationDegrees: 30

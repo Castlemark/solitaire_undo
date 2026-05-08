@@ -30,4 +30,9 @@ public class MoveHistoryManager : MonoBehaviour
             undoButtonController.OnMoveHistoryEmptied();
         }
     }
+
+    private void OnDestroy()
+    {
+        EventBus.MovePerformed -= RecordMove;
+    }
 }

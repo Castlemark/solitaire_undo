@@ -1,4 +1,4 @@
 public interface IClickable
 {
-    void OnClick(CardController cardController = null);
+    void OnClick(CardController currentlyDraggedCard = null);
 }

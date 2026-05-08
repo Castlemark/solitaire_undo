@@ -35,35 +35,33 @@ public class CardController : MonoBehaviour, IClickable
         visuals.SetCardVisuals();
     }
 
-    public void OnClick(CardController cardController = null)
+    public void OnClick(CardController currentlyDraggedCard = null)
     {
-        if (cardController != null)
+        if (currentlyDraggedCard != null)
         {
             if (stackedCardAbove == null) // Handle stacking
             {
-                stackedCardAbove = cardController;
-                stackedCardAbove.StackAndTravelTo(this, stackedCardTargetPosition);
-                return;
+                currentlyDraggedCard.StackAndTravelTo(this, stackedCardTargetPosition);
             }
 
-            return; // Ignore clicks from other cards if already stacked
+            return;
         }
 
         if (isDragging)
         {
             Drop();
             EventBus.RaiseMovePerformed(new Move(this, null, null, initialPosition));
-        }
-        else
-        {
-            // Unstacking: If we've reached this point, we always want to unstack
-            if (stackedCardBelow != null)
-            {
-                stackedCardBelow.Unstack();
-            }
 
-            Drag();
+            return;
         }
+
+        // Unstacking: If we've reached this point, we always want to unstack
+        if (stackedCardBelow != null)
+        {
+            stackedCardBelow.Unstack();
+        }
+
+        Drag();
     }
 
     public void TravelTo(Vector2 position, bool recordMove = true)
@@ -84,6 +82,7 @@ public class CardController : MonoBehaviour, IClickable
 
         var previousStackedCard = stackedCardBelow;
         stackedCardBelow = baseCard;
+        baseCard.stackedCardAbove = this;
 
         mover.TravelTo(position);
 

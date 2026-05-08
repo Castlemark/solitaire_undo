@@ -31,13 +31,15 @@ public class InputHandler : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit2D[] hits = Physics2D.RaycastAll(ray.origin, ray.direction, 100f);
 
-        if (hits.Length == 0 && draggingCard != null)
+        if (hits.Length == 0)
         {
-            draggingCard.OnClick();
+            if (draggingCard != null)
+            {
+                draggingCard.OnClick();
+            }
+
             return;
         }
-
-        if (hits.Length == 0) return;
 
         // Find the topmost collider based on Y position (Y-sort)
         RaycastHit2D topHit = hits[0];
@@ -56,5 +58,11 @@ public class InputHandler : MonoBehaviour
         {
             clickable.OnClick(draggingCard);
         }
+    }
+
+    private void OnDestroy()
+    {
+        EventBus.DragStarted -= OnDragStarted;
+        EventBus.DragStopped -= OnDragStopped;
     }
 }

@@ -44,16 +44,14 @@ public class CardMover : MonoBehaviour
         if (travelTargetPosition != Vector3.forward) // we use Vector3.forward as the default value
         {
             LerpTo(travelTargetPosition);
+
             if (Vector3.Distance(transform.position, travelTargetPosition) < MOVEMENT_THRESHOLD)
             {
                 transform.position = travelTargetPosition;
                 travelTargetPosition = Vector3.forward;
+
+                targetRotationZ = 0f; // When we've finished traveling, lerp rotation to default
             }
-        }
-        else
-        {
-            // When not dragging and not traveling, lerp rotation to default
-            targetRotationZ = 0f;
         }
 
         LerpCardRotation();
@@ -63,7 +61,7 @@ public class CardMover : MonoBehaviour
     {
         transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, followSmoothTime);
 
-        // Calculate targetrotation based on horizontal movement
+        // Calculate target rotation based on horizontal movement
         Vector3 motionDelta = prevPosition - transform.position;
         prevPosition = transform.position;
 
@@ -72,7 +70,7 @@ public class CardMover : MonoBehaviour
 
     private void LerpCardRotation()
     {
-        if (currentRotationZ == targetRotationZ) return;
+        if (currentRotationZ == targetRotationZ) return; // No need to update rotation if we're already at the target
 
         currentRotationZ = Mathf.LerpAngle(currentRotationZ, targetRotationZ, Time.deltaTime / rotationSmoothTime);
 

@@ -8,11 +8,11 @@ public class CardHolder : MonoBehaviour, IClickable
 
     private CardController stackedCardAbove;
 
-    public void OnClick(CardController cardController = null)
+    public void OnClick(CardController currentlyDraggedCard = null)
     {
-        if (cardController == null || stackedCardAbove != null) return; // Only allow clicks from cards if we don't already have a card stacked above
+        if (currentlyDraggedCard == null || stackedCardAbove != null) return; // Only allow clicks from cards if we don't already have a card stacked above
 
-        cardController.TravelTo(holdedCardTargetPosition.position);
+        currentlyDraggedCard.TravelTo(holdedCardTargetPosition.position);
 
     }
 }

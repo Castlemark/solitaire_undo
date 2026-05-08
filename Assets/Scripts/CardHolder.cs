@@ -2,10 +2,12 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class CardHolder : MonoBehaviour
 {
     [SerializeField] private Transform holdedCardTargetPosition;
     [SerializeField] private SpriteRenderer cardArea;
+    [SerializeField] private Collider2D cardHolderCollider;
 
     [Header("Drag Attention animation")]
     [SerializeField] private float FadeInDuration;
@@ -13,7 +15,7 @@ public class CardHolder : MonoBehaviour
     [SerializeField] private float AttentionScaleDuration;
 
     private CardController holdedCard;
-    private Tween scaleTwin;
+    private Tween attentionTween;
     private Vector3 originalScale;
     private float maxAlpha;
 
@@ -23,28 +25,40 @@ public class CardHolder : MonoBehaviour
         maxAlpha = cardArea.color.a;
         cardArea.color = new Color(cardArea.color.r, cardArea.color.g, cardArea.color.b, 0.0f);
 
+        SubscribeToDragEvents();
+    }
+
+    private void SubscribeToDragEvents()
+    {
         EventBus.DragStarted += OnCardDragStarted;
         EventBus.DragStopped += OnCardDragStopped;
     }
 
+    private void UnsubsribeFromDragEvents()
+    {
+        EventBus.DragStarted -= OnCardDragStarted;
+        EventBus.DragStopped -= OnCardDragStopped;
+    }
+
     private void OnCardDragStarted(CardController controller)
     {
-        if (scaleTwin != null)
+
+        if (attentionTween != null)
         {
-            KillDragStartedSequence();
+            KillAttentionAnimation();
         }
 
         Vector3 targetScale = originalScale * AttentionScaleFactor;
-        scaleTwin = cardArea.transform.DOScale(targetScale, AttentionScaleDuration).SetLoops(-1, LoopType.Yoyo);
+        attentionTween = cardArea.transform.DOScale(targetScale, AttentionScaleDuration).SetLoops(-1, LoopType.Yoyo);
 
         Tween fadeInTween = cardArea.DOColor(new Color(cardArea.color.r, cardArea.color.g, cardArea.color.b, maxAlpha), 0.25f)
-            .OnComplete(() => scaleTwin.Play())
+            .OnComplete(() => attentionTween.Play())
             .Play();
     }
 
     private void OnCardDragStopped(CardController controller)
     {
-        KillDragStartedSequence();
+        KillAttentionAnimation();
 
         if (holdedCard != null)
         {
@@ -52,10 +66,10 @@ public class CardHolder : MonoBehaviour
         }
     }
 
-    private void KillDragStartedSequence()
+    private void KillAttentionAnimation()
     {
-        scaleTwin?.Kill();
-        scaleTwin = null;
+        attentionTween?.Kill();
+        attentionTween = null;
 
         // Reset to original state
         cardArea.transform.localScale = originalScale;

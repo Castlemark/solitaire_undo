@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2280534710108461812}
   - component: {fileID: 4197638346166716541}
   - component: {fileID: 5870790706854087430}
+  - component: {fileID: 6736612115418842738}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -147,6 +148,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b633d9ca1366a024db04fd44d9114793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mover: {fileID: 6736612115418842738}
+--- !u!114 &6736612115418842738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7790915759819859345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777ca18cc054f4ca7a000cda2e9c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardImage: {fileID: 2280534710108461812}
   cardFollowPositionOffset: 0.8
   followSmoothTime: 0.1
   rotationSmoothTime: 0.1

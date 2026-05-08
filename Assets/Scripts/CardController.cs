@@ -17,6 +17,7 @@ public class CardController : MonoBehaviour, IClickable
 
     private Vector3 stackedCardTargetPosition => transform.position - stackedCardOffset;
 
+    private CardController stackedCardBelow;
     private CardController stackedCardAbove;
 
     private void Awake()
@@ -37,15 +38,14 @@ public class CardController : MonoBehaviour, IClickable
 
         if (cardController != null)
         {
-            if (stackedCardAbove == null)
+            if (stackedCardAbove == null) // Handle stacking
             {
                 stackedCardAbove = cardController;
-                stackedCardAbove.TravelTo(stackedCardTargetPosition);
-                Debug.Log($"CardController: Stacked card {stackedCardAbove.name} above {name}.");
-
+                stackedCardAbove.TravelToBaseStack(this, stackedCardTargetPosition);
                 return;
             }
 
+            return; // Ignore clicks from other cards if already stacked
         }
 
         if (isDragging)
@@ -54,13 +54,27 @@ public class CardController : MonoBehaviour, IClickable
         }
         else
         {
+            if (stackedCardBelow != null) // Handle unstacking
+            {
+                stackedCardBelow.ReleaseStackedCard();
+            }
+
             StartDragging();
         }
     }
 
-    public void TravelTo(Vector2 position)
+    public void ReleaseStackedCard()
     {
-        isDragging = false;
+        if (stackedCardAbove != null)
+        {
+            stackedCardAbove = null;
+        }
+    }
+
+    public void TravelToBaseStack(CardController baseCard, Vector2 position)
+    {
+        StopDragging();
+        stackedCardBelow = baseCard;
         mover.TravelTo(position);
     }
 

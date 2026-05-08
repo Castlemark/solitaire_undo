@@ -62,7 +62,7 @@ public class CardHolder : MonoBehaviour
 
         if (holdedCard != null)
         {
-            holdedCard.TravelTo(holdedCardTargetPosition.position);
+            //holdedCard.TravelTo(holdedCardTargetPosition.position);
         }
     }
 

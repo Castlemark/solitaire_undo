@@ -129,7 +129,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6
+      value: 3.75
       objectReference: {fileID: 0}
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.y
@@ -226,7 +226,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8148327036393707206, guid: e2c4367d172f09d438e17052bbb47f38, type: 3}
       propertyPath: m_Name
-      value: CardHolderFullSize
+      value: CardHolder
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -334,7 +334,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.y
@@ -528,7 +528,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6
+      value: -3.75
       objectReference: {fileID: 0}
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.y
@@ -585,7 +585,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2
+      value: -1.25
       objectReference: {fileID: 0}
     - target: {fileID: 6555168237590876171, guid: f79645dd10f503548860a23d2d8cbe43, type: 3}
       propertyPath: m_LocalPosition.y

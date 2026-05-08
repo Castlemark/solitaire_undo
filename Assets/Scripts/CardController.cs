@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -12,6 +13,10 @@ public class CardController : MonoBehaviour, IClickable
     [SerializeField] private CardMover mover;
     [SerializeField] private SortingGroup sortingGroup;
     [SerializeField] private Collider2D cardCollider;
+
+    [Header("Movement Settings")]
+    [SerializeField] private float dragScaleFactor;
+    [SerializeField] private float dragScaleDuration;
     [SerializeField] private Vector3 dragOffset;
     [SerializeField] private Vector3 stackedCardOffset;
 
@@ -23,25 +28,21 @@ public class CardController : MonoBehaviour, IClickable
     private void Awake()
     {
         mainCamera = Camera.main;
-        if (mainCamera == null)
+
+        if (mover == null)
         {
-            Debug.LogError("CardController: No main camera found. Dragging will not work until a camera is assigned.");
+            Debug.LogError($"CardController: Card {name} has no CardMover assigned, please assign one.");
         }
     }
 
     public void OnClick(CardController cardController = null)
     {
-        if (mainCamera == null)
-        {
-            return;
-        }
-
         if (cardController != null)
         {
             if (stackedCardAbove == null) // Handle stacking
             {
                 stackedCardAbove = cardController;
-                stackedCardAbove.TravelToBaseStack(this, stackedCardTargetPosition);
+                stackedCardAbove.StackAndTravelTo(this, stackedCardTargetPosition);
                 return;
             }
 
@@ -50,41 +51,42 @@ public class CardController : MonoBehaviour, IClickable
 
         if (isDragging)
         {
-            StopDragging();
+            Drop();
         }
         else
         {
-            if (stackedCardBelow != null) // Handle unstacking
+            // Unstacking: If we've reached this point, we always want to unstack
+            if (stackedCardBelow != null)
             {
-                stackedCardBelow.ReleaseStackedCard();
+                stackedCardBelow.Unstack();
+                stackedCardBelow = null;
             }
 
-            StartDragging();
+            Drag();
         }
     }
 
-    public void ReleaseStackedCard()
+    public void TravelTo(Vector2 position)
     {
-        if (stackedCardAbove != null)
-        {
-            stackedCardAbove = null;
-        }
+        Drop();
+        mover.TravelTo(position);
     }
 
-    public void TravelToBaseStack(CardController baseCard, Vector2 position)
+    public void StackAndTravelTo(CardController baseCard, Vector2 position)
     {
-        StopDragging();
+        Drop();
         stackedCardBelow = baseCard;
         mover.TravelTo(position);
     }
 
+    // To unstack, we simply clear the reference in the card below. This way, it will no longer try to control the above card's position.
+    public void Unstack()
+    {
+        stackedCardAbove = null;
+    }
+
     private void Update()
     {
-        if (mainCamera == null || mover == null)
-        {
-            return;
-        }
-
         if (isDragging)
         {
             var mouseScreenPosition = mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
@@ -99,19 +101,41 @@ public class CardController : MonoBehaviour, IClickable
         }
     }
 
-    private void StartDragging()
+    private void Drag()
     {
         isDragging = true;
-        sortingGroup.sortingLayerName = DRAGGING_SORTING_LAYER;
-        cardCollider.enabled = false;
+        PrepareForStackedDragging();
         EventBus.RaiseDragStarted(this);
     }
 
-    private void StopDragging()
+    private void PrepareForStackedDragging()
+    {
+        sortingGroup.sortingLayerName = DRAGGING_SORTING_LAYER;
+        cardCollider.enabled = false;
+        transform.DOScale(Vector3.one * dragScaleFactor, dragScaleDuration);
+
+        if (stackedCardAbove != null)
+        {
+            stackedCardAbove.PrepareForStackedDragging();
+        }
+    }
+
+    private void Drop()
     {
         isDragging = false;
+        PrepareForStackedDropping();
+        EventBus.RaiseDragStopped(this);
+    }
+
+    private void PrepareForStackedDropping()
+    {
         sortingGroup.sortingLayerName = DEFAULT_SORTING_LAYER;
         cardCollider.enabled = true;
-        EventBus.RaiseDragStopped(this);
+        transform.DOScale(Vector3.one, dragScaleDuration);
+
+        if (stackedCardAbove != null)
+        {
+            stackedCardAbove.PrepareForStackedDropping();
+        }
     }
 }

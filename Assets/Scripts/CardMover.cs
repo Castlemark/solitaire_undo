@@ -75,10 +75,7 @@ public class CardMover : MonoBehaviour
 
     private void LerpCardRotation()
     {
-        if (currentRotationZ == targetRotationZ)
-        {
-            return;
-        }
+        if (currentRotationZ == targetRotationZ) return;
 
         currentRotationZ = Mathf.LerpAngle(currentRotationZ, targetRotationZ, Time.deltaTime / rotationSmoothTime);
 

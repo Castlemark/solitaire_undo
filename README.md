@@ -2,6 +2,8 @@
 
 A minimal Solitaire-style card game prototype in Unity demonstrating an **Undo/Redo system**. Players can drag cards anywhere on the screen and revert or replay their moves using UI buttons.
 
+https://github.com/user-attachments/assets/285f7563-8a86-4d3f-a7cb-8284510ca23e
+
 ## What Was Built
 
 ### Core Features

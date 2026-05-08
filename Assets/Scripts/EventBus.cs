@@ -28,6 +28,12 @@ public class MoveHistory
     public void RecordMove(Move move)
     {
         pastMoves.Push(move);
+
+        Debug.Log("All moves:");
+        foreach (var item in pastMoves)
+        {
+            Debug.Log(item);
+        }
     }
 
     public void UndoLastMove()
@@ -36,38 +42,52 @@ public class MoveHistory
 
         Move lastMove = pastMoves.Pop();
         lastMove.Undo();
+
+        Debug.Log($"Undone move: {lastMove}");
+        Debug.Log("Remaining moves:");
+        foreach (var item in pastMoves)
+        {
+            Debug.Log(item);
+        }
     }
 }
 
 public class Move
 {
     CardController card;
-    CardController currentTargetCard;
-    CardController originalTargetCard;
-    Vector2 targetPosition;
+    CardController currentBelowCard;
+    CardController originalBelowCard;
+    Vector2 initialPosition;
 
-    public Move(CardController card, CardController currentTargetCard, CardController originalTargetCard = null, Vector2 targetPosition = default)
+
+
+    public Move(CardController card, CardController currentBelowCard = null, CardController originalBelowCard = null, Vector2 initialPosition = default)
     {
         this.card = card;
-        this.currentTargetCard = currentTargetCard;
-        this.targetPosition = targetPosition;
-        this.originalTargetCard = originalTargetCard;
+        this.currentBelowCard = currentBelowCard;
+        this.initialPosition = initialPosition;
+        this.originalBelowCard = originalBelowCard;
     }
 
     public void Undo()
     {
-        if (originalTargetCard != null)
+        if (originalBelowCard != null)
         {
-            card.StackAndTravelTo(originalTargetCard, targetPosition);
+            card.StackAndTravelTo(originalBelowCard, initialPosition, false);
         }
         else
         {
-            if (currentTargetCard != null)
+            if (currentBelowCard != null)
             {
-                currentTargetCard.Unstack();
+                currentBelowCard.Unstack();
             }
 
-            card.TravelTo(targetPosition);
+            card.TravelTo(initialPosition, false);
         }
+    }
+
+    public override string ToString()
+    {
+        return $"Move(card={card.name}, currentTargetCard={currentBelowCard?.name}, originalTargetCard={originalBelowCard?.name}, initialPosition={initialPosition})";
     }
 }

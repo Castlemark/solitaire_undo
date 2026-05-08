@@ -54,6 +54,7 @@ public class CardController : MonoBehaviour, IClickable
         if (isDragging)
         {
             Drop();
+            EventBus.MoveHistory.RecordMove(new Move(this, null, null, initialPosition));
         }
         else
         {
@@ -67,15 +68,19 @@ public class CardController : MonoBehaviour, IClickable
         }
     }
 
-    public void TravelTo(Vector2 position)
+    public void TravelTo(Vector2 position, bool recordMove = true)
     {
         Drop();
 
         mover.TravelTo(position);
-        EventBus.MoveHistory.RecordMove(new Move(this, null, stackedCardBelow, initialPosition));
+
+        if (recordMove)
+        {
+            EventBus.MoveHistory.RecordMove(new Move(this, null, stackedCardBelow, initialPosition));
+        }
     }
 
-    public void StackAndTravelTo(CardController baseCard, Vector2 position)
+    public void StackAndTravelTo(CardController baseCard, Vector2 position, bool recordMove = true)
     {
         Drop();
 
@@ -83,7 +88,11 @@ public class CardController : MonoBehaviour, IClickable
         stackedCardBelow = baseCard;
 
         mover.TravelTo(position);
-        EventBus.MoveHistory.RecordMove(new Move(this, stackedCardBelow, previousStackedCard, initialPosition));
+
+        if (recordMove)
+        {
+            EventBus.MoveHistory.RecordMove(new Move(this, stackedCardBelow, previousStackedCard, initialPosition));
+        }
     }
 
     // To unstack, we simply clear the reference in the card below. This way, it will no longer try to control the above card's position.

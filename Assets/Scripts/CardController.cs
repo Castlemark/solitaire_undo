@@ -6,6 +6,7 @@ public class CardController : MonoBehaviour, IClickable
     private bool isDragging;
     private Camera mainCamera;
     [SerializeField] private CardMover mover;
+    [SerializeField] private Vector3 dragOffset;
 
     private void Awake()
     {
@@ -33,12 +34,11 @@ public class CardController : MonoBehaviour, IClickable
         }
     }
 
-    public void TravelTo(Vector3 position)
+    public void TravelTo(Vector2 position)
     {
         isDragging = false;
         mover.TravelTo(position);
     }
-
 
     private void Update()
     {
@@ -47,20 +47,24 @@ public class CardController : MonoBehaviour, IClickable
             return;
         }
 
-        mover.UpdateMovement(mainCamera, isDragging, Mouse.current.position.ReadValue());
+        if (isDragging)
+        {
+            var mouseScreenPosition = mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            mover.UpdateTravelTarget(mouseScreenPosition - dragOffset);
+        }
+
+        mover.UpdateMovement();
     }
 
     private void StartDragging()
     {
         isDragging = true;
-        mover.StartDragging(Mouse.current.position.ReadValue(), mainCamera);
         EventBus.RaiseDragStarted(this);
     }
 
     private void StopDragging()
     {
         isDragging = false;
-        mover.SetReturnToNeutralRotation();
         EventBus.RaiseDragStopped(this);
     }
 }

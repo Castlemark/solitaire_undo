@@ -1,18 +1,22 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class CardController : MonoBehaviour, IClickable
 {
-    private bool isDragging;
-    private Vector3 dragOffset;
-    private Camera mainCamera;
 
     [SerializeField] private float cardFollowPositionOffset;
     [SerializeField] private float followSmoothTime;
     [SerializeField] private float rotationSmoothTime;
     [SerializeField] private float maxRotationDegrees;
     [SerializeField] private float rotationMultiplier;
+
+    private bool isTraveling;
+    private Vector3 travelTargetPosition;
+    private bool isDragging;
+    private Vector3 dragOffset;
+    private Camera mainCamera;
 
     private Vector3 velocity = Vector3.zero;
     private Vector3 motionDelta;
@@ -46,6 +50,19 @@ public class CardController : MonoBehaviour, IClickable
         }
     }
 
+    public void TravelTo(Vector3 position)
+    {
+        isTraveling = true;
+        isDragging = false;
+
+        travelTargetPosition = position;
+        prevPosition = transform.position;
+        velocity = Vector3.zero;
+        currentRotationZ = transform.eulerAngles.z;
+        targetRotationZ = currentRotationZ;
+    }
+
+
     private void Update()
     {
         if (mainCamera == null)
@@ -55,7 +72,17 @@ public class CardController : MonoBehaviour, IClickable
 
         if (isDragging)
         {
-            LerpFollowMouse();
+            LerpFollow(Mouse.current.position.ReadValue());
+        }
+        else if (isTraveling)
+        {
+            LerpToWorldPoint(travelTargetPosition);
+            if (Vector3.Distance(transform.position, travelTargetPosition + dragOffset) < 0.01f)
+            {
+                Debug.Log("CardController: Reached travel target position.");
+                isTraveling = false;
+                transform.position = travelTargetPosition + dragOffset; // Snap to target to avoid small discrepancies
+            }
         }
 
         LerpCardRotation();
@@ -77,14 +104,19 @@ public class CardController : MonoBehaviour, IClickable
         velocity = Vector3.zero;
         currentRotationZ = transform.eulerAngles.z;
         targetRotationZ = currentRotationZ;
+
+        EventBus.RaiseDragStarted(this);
     }
 
     private void StopDragging()
     {
         isDragging = false;
         targetRotationZ = 0f;
+
+        EventBus.RaiseDragStopped(this);
     }
 
+    // We lerp rotation separately to ensure it returns to 0 smoothly even when the card stops being dragged
     private void LerpCardRotation()
     {
         if (currentRotationZ != targetRotationZ)
@@ -95,17 +127,21 @@ public class CardController : MonoBehaviour, IClickable
         }
     }
 
-    private void LerpFollowMouse()
+    private void LerpFollow(Vector2 target)
     {
-        Vector3 mousePos = Mouse.current.position.ReadValue();
-        Vector3 screenPoint = new(mousePos.x, mousePos.y, mainCamera.WorldToScreenPoint(transform.position).z);
+        Vector3 screenPoint = new(target.x, target.y, mainCamera.WorldToScreenPoint(transform.position).z);
         Vector3 worldPoint = mainCamera.ScreenToWorldPoint(screenPoint);
+        LerpToWorldPoint(worldPoint);
+    }
+
+    private void LerpToWorldPoint(Vector3 worldPoint)
+    {
         Vector3 targetPos = worldPoint + dragOffset;
 
         // Smooth position following with delay
         transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, followSmoothTime);
 
-        // Calculate target rotation
+        // Calculate desired rotation
         Vector3 motionDelta = prevPosition - transform.position;
         prevPosition = transform.position;
 

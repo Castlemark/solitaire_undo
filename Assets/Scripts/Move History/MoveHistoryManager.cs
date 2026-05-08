@@ -16,6 +16,13 @@ public class MoveHistoryManager : MonoBehaviour
     {
         pastMoves.Push(move);
         undoButtonController.OnMoveRecorded(move);
+
+        var message = "All moves:\n";
+        foreach (var pastMove in pastMoves)
+        {
+            message += pastMove.ToString() + "\n";
+        }
+        Debug.Log(message);
     }
 
     public void UndoLastMove()

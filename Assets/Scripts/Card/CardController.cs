@@ -27,6 +27,7 @@ public class CardController : MonoBehaviour, IClickable
     private CardController stackedCardAbove;
 
     private Vector3 initialPosition;
+    private CardController previousBelowCard;
 
     private void Awake()
     {
@@ -50,15 +51,9 @@ public class CardController : MonoBehaviour, IClickable
         if (isDragging)
         {
             Drop();
-            EventBus.RaiseMovePerformed(new Move(this, null, null, initialPosition));
+            EventBus.RaiseMovePerformed(new Move(this, null, previousBelowCard, initialPosition));
 
             return;
-        }
-
-        // Unstacking: If we've reached this point, we always want to unstack
-        if (stackedCardBelow != null)
-        {
-            stackedCardBelow.Unstack();
         }
 
         Drag();
@@ -72,7 +67,7 @@ public class CardController : MonoBehaviour, IClickable
 
         if (recordMove)
         {
-            EventBus.RaiseMovePerformed(new Move(this, null, stackedCardBelow, initialPosition));
+            EventBus.RaiseMovePerformed(new Move(this, null, previousBelowCard, initialPosition));
         }
     }
 
@@ -80,7 +75,6 @@ public class CardController : MonoBehaviour, IClickable
     {
         Drop();
 
-        var previousStackedCard = stackedCardBelow;
         stackedCardBelow = baseCard;
         baseCard.stackedCardAbove = this;
 
@@ -88,7 +82,7 @@ public class CardController : MonoBehaviour, IClickable
 
         if (recordMove)
         {
-            EventBus.RaiseMovePerformed(new Move(this, stackedCardBelow, previousStackedCard, initialPosition));
+            EventBus.RaiseMovePerformed(new Move(this, stackedCardBelow, previousBelowCard, initialPosition));
         }
     }
 
@@ -120,6 +114,12 @@ public class CardController : MonoBehaviour, IClickable
 
     private void Drag()
     {
+        previousBelowCard = stackedCardBelow;
+        if (stackedCardBelow != null)
+        {
+            stackedCardBelow.Unstack();
+        }
+
         isDragging = true;
         initialPosition = transform.position;
         PrepareForStackedDragging();

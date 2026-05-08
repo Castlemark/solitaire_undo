@@ -10,12 +10,13 @@ public class Move
 
 
 
-    public Move(CardController card, CardController currentBelowCard = null, CardController originalBelowCard = null, Vector2 originalPosition = default)
+    public Move(CardController card, CardController currentBelowCard, CardController originalBelowCard, Vector2 currentPosition, Vector2 originalPosition)
     {
         this.card = card;
         this.currentBelowCard = currentBelowCard;
-        this.originalPosition = originalPosition;
         this.originalBelowCard = originalBelowCard;
+        this.currentPosition = currentPosition;
+        this.originalPosition = originalPosition;
     }
 
     public void Undo()
@@ -36,8 +37,25 @@ public class Move
         }
     }
 
+    public void Redo()
+    {
+        if (originalBelowCard != null)
+        {
+            originalBelowCard.Unstack();
+        }
+
+        if (currentBelowCard != null)
+        {
+            card.StackAndTravelTo(currentBelowCard, currentPosition, false);
+        }
+        else
+        {
+            card.TravelTo(currentPosition, false);
+        }
+    }
+
     public override string ToString()
     {
-        return $"Move(card={card.name}, currentTargetCard={currentBelowCard?.name}, originalTargetCard={originalBelowCard?.name}, originalPosition={originalPosition})";
+        return $"Move(card: {card.name}, currentTargetCard: {currentBelowCard?.name}, originalTargetCard: {originalBelowCard?.name}, currentPosition: {currentPosition}, originalPosition: {originalPosition})";
     }
 }

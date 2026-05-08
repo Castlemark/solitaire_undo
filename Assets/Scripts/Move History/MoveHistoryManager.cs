@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class MoveHistoryManager : MonoBehaviour
 {
-    [SerializeField] private UndoButtonController undoButtonController;
+    [SerializeField] private MoveHistoryButtonController undoButtonController;
+    [SerializeField] private MoveHistoryButtonController redoButtonController;
 
-    private Stack<Move> pastMoves = new();
+    private Stack<Move> undoMoves = new();
+    private Stack<Move> redoMoves = new();
 
     private void Awake()
     {
@@ -14,27 +16,40 @@ public class MoveHistoryManager : MonoBehaviour
 
     public void RecordMove(Move move)
     {
-        pastMoves.Push(move);
-        undoButtonController.OnMoveRecorded(move);
+        undoMoves.Push(move);
+        redoMoves.Clear(); // Clear redo stack on new move
 
-        var message = "All moves:\n";
-        foreach (var pastMove in pastMoves)
-        {
-            message += pastMove.ToString() + "\n";
-        }
-        Debug.Log(message);
+        undoButtonController.OnMoveRecorded(move);
+        redoButtonController.OnMoveHistoryEmptied();
     }
 
     public void UndoLastMove()
     {
-        if (pastMoves.Count == 0) return;
+        if (undoMoves.Count == 0) return;
 
-        Move lastMove = pastMoves.Pop();
+        Move lastMove = undoMoves.Pop();
         lastMove.Undo();
+        redoMoves.Push(lastMove);
 
-        if (pastMoves.Count == 0)
+        redoButtonController.OnMoveRecorded(lastMove);
+        if (undoMoves.Count == 0)
         {
             undoButtonController.OnMoveHistoryEmptied();
+        }
+    }
+
+    public void RedoLastMove()
+    {
+        if (redoMoves.Count == 0) return;
+
+        Move lastMove = redoMoves.Pop();
+        lastMove.Redo();
+        undoMoves.Push(lastMove);
+
+        undoButtonController.OnMoveRecorded(lastMove);
+        if (redoMoves.Count == 0)
+        {
+            redoButtonController.OnMoveHistoryEmptied();
         }
     }
 

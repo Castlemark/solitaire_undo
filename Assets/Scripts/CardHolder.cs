@@ -1,5 +1,3 @@
-using System;
-using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]

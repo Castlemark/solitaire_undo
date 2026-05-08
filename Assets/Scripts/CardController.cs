@@ -54,7 +54,7 @@ public class CardController : MonoBehaviour, IClickable
         if (isDragging)
         {
             Drop();
-            EventBus.MoveHistory.RecordMove(new Move(this, null, null, initialPosition));
+            EventBus.RaiseMovePerformed(new Move(this, null, null, initialPosition));
         }
         else
         {
@@ -76,7 +76,7 @@ public class CardController : MonoBehaviour, IClickable
 
         if (recordMove)
         {
-            EventBus.MoveHistory.RecordMove(new Move(this, null, stackedCardBelow, initialPosition));
+            EventBus.RaiseMovePerformed(new Move(this, null, stackedCardBelow, initialPosition));
         }
     }
 
@@ -91,7 +91,7 @@ public class CardController : MonoBehaviour, IClickable
 
         if (recordMove)
         {
-            EventBus.MoveHistory.RecordMove(new Move(this, stackedCardBelow, previousStackedCard, initialPosition));
+            EventBus.RaiseMovePerformed(new Move(this, stackedCardBelow, previousStackedCard, initialPosition));
         }
     }
 

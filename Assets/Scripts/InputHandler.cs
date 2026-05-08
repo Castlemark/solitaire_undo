@@ -7,7 +7,7 @@ public class InputHandler : MonoBehaviour
 
     private CardController draggingCard;
 
-    void Awake()
+    private void Awake()
     {
         mainCamera = Camera.main;
         if (mainCamera == null)
@@ -56,10 +56,5 @@ public class InputHandler : MonoBehaviour
         {
             clickable.OnClick(draggingCard);
         }
-    }
-
-    public void UndoMove()
-    {
-        EventBus.MoveHistory.UndoLastMove();
     }
 }

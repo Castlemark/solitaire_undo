@@ -11,6 +11,7 @@ public class CardController : MonoBehaviour, IClickable
     private bool isDragging;
     private Camera mainCamera;
     [SerializeField] private CardMover mover;
+    [SerializeField] private CardVisuals visuals;
     [SerializeField] private SortingGroup sortingGroup;
     [SerializeField] private Collider2D cardCollider;
 
@@ -31,10 +32,7 @@ public class CardController : MonoBehaviour, IClickable
     {
         mainCamera = Camera.main;
 
-        if (mover == null)
-        {
-            Debug.LogError($"CardController: Card {name} has no CardMover assigned, please assign one.");
-        }
+        visuals.SetCardVisuals();
     }
 
     public void OnClick(CardController cardController = null)
@@ -95,7 +93,7 @@ public class CardController : MonoBehaviour, IClickable
         }
     }
 
-    // To unstack, we simply clear the reference in the card below. This way, it will no longer try to control the above card's position.
+    // To unstack, we simply clear the references of the below card. This way, it will no longer try to control the above card's position.
     public void Unstack()
     {
         if (stackedCardAbove != null)

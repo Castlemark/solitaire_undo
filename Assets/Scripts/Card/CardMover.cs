@@ -5,9 +5,6 @@ public class CardMover : MonoBehaviour
     private const float MOVEMENT_THRESHOLD = 0.01f;
     private const float ROTATION_THRESHOLD = 0.1f;
 
-
-    [SerializeField] private SpriteRenderer cardImage;
-
     [Header("Movement Settings")]
     [SerializeField] private float followSmoothTime = 0.1f;
     [SerializeField] private float rotationSmoothTime = 0.1f;

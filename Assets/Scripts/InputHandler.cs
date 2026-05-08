@@ -57,4 +57,9 @@ public class InputHandler : MonoBehaviour
             clickable.OnClick(draggingCard);
         }
     }
+
+    public void UndoMove()
+    {
+        EventBus.MoveHistory.UndoLastMove();
+    }
 }
